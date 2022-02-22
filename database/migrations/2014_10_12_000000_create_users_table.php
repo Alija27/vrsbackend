@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('password')->bcrypt();
             $table->string('address');
             $table->string('phone');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->string('role')->default("customer");
             $table->rememberToken();
             $table->timestamps();

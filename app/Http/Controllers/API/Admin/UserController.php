@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\API\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -34,10 +36,19 @@ class UserController extends Controller
             "address"=>["required"],
             "password"=>["required"],
             "role"=>["required"],
-            "image"=>["nullable"]
+            "image"=>["nullable",'image','mimes:png,jpeg,gif']
         ]);
+        
+            $ext=$request->file('image')->extension();
+            $name=Str::random(20);
+            $path=$name.".".$ext;
+
+            $data['image']=$request->file('image')->storeAs('public/images',$path);
+            
+            
+       
         User::create($data);
-        return response()->json('User Created Sucessfully');
+        return response()->json(['message' =>'User Created  Sucessfully']);
     }
 
     /**
@@ -60,6 +71,8 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        
+
         $data=$request->validate([
             "name"=>["required"],
             "email"=>["required"],
@@ -67,10 +80,22 @@ class UserController extends Controller
             "address"=>["required"],
             "password"=>["required"],
             "role"=>["required"],
-            "image"=>["nullable"]
+            "image"=>["nullable",'image','mimes:png,jpeg,gif']
         ]);
+        
+        /* $ext=$request->file('image')->extension();
+        $name=Str::random(20);
+        $path=$name.".".$ext;
+
+        $data['image']= $request->file('image')->storeAs('public/images',$path);
+        
+            if($user->image){
+            Storage::delete('public/'.$user->imgae);
+            }
+         */
         $user->update($data);
-        return response()->json('User Updated Sucessfully');
+
+        return response()->json(['message' =>'User Updated Sucessfully']);
     }
 
     /**
