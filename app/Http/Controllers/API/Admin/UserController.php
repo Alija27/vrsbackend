@@ -17,14 +17,14 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users=User::all();
+        $users=User::with('vendor')->get();
         return response()->json($users);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $requsest
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
