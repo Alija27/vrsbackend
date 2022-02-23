@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Admin;
 use App\Models\Vendor;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class VendorController extends Controller
@@ -84,7 +85,12 @@ class VendorController extends Controller
      */
     public function destroy(Vendor $vendor)
     {
-        $vendor->delete();
+
+        DB::transaction(function () {
+            // DB::delete('delete from vendors where id =' . $vendor->id);
+            $vendor->user()->delete();
+            $vendor->delete();
+        });
         return response()->json(["message"=>"Vendor deleted Sucessfully"]);
     }
 }
