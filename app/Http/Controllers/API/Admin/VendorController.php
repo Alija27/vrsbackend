@@ -43,7 +43,7 @@ class VendorController extends Controller
             $data['image']=$request->file('image')->storeAs('public/images',$path);
             
         Vendor::create($data);
-        return response()->json(['message'=>'Vendor Created sucessfully']);
+        return response()->json(['message'=>'Vendor Created sucessfully'], 201);
     }
 
     /**
@@ -86,7 +86,7 @@ class VendorController extends Controller
     public function destroy(Vendor $vendor)
     {
 
-        DB::transaction(function () {
+        DB::transaction(function () use($vendor) {
             // DB::delete('delete from vendors where id =' . $vendor->id);
             $vendor->user()->delete();
             $vendor->delete();

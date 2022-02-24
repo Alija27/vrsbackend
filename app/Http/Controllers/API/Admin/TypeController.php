@@ -15,7 +15,7 @@ class TypeController extends Controller
      */
     public function index()
     {
-        $types=Type::all();
+        $types=Type::with('vehicles')->get();
         return response()->json($types);
     }
 
@@ -27,7 +27,7 @@ class TypeController extends Controller
      */
     public function store(Request $request)
     {
-        $data=$request->vaidate([
+        $data=$request->validate([
             'name'=>["required"]
         ]);
         Type::create($data);

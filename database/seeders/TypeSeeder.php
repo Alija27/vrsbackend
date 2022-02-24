@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Vendor;
+use App\Models\Type;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class VendorSeeder extends Seeder
+class TypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,12 +15,8 @@ class VendorSeeder extends Seeder
      */
     public function run()
     {
-        Vendor::create([
-            'name'=>'Vendorname',
-            'user_id'=>2,
-            'address'=>'gaindakot',
-            'phone'=>'9812919812',
-            'image'=>"image.png",
+        Type::create([
+            "name"=>"abc"
         ]);
     }
 }
