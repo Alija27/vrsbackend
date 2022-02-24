@@ -21,3 +21,5 @@ Route::resource('users', \App\Http\Controllers\API\Admin\UserController::class);
 Route::resource('vendors',\App\Http\Controllers\API\Admin\VendorController::class);
 Route::resource('types',\App\Http\Controllers\API\Admin\TypeController::class);
 Route::resource('vehicles',\App\Http\Controllers\API\Admin\VehicleController::class);
+Route::resource('rentals',\App\Http\Controllers\API\Admin\RentalController::class);
+
