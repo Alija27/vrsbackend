@@ -22,4 +22,4 @@ Route::resource('vendors',\App\Http\Controllers\API\Admin\VendorController::clas
 Route::resource('types',\App\Http\Controllers\API\Admin\TypeController::class);
 Route::resource('vehicles',\App\Http\Controllers\API\Admin\VehicleController::class);
 Route::resource('rentals',\App\Http\Controllers\API\Admin\RentalController::class);
-
+Route::resource('reviews',\App\Http\Controllers\API\Admin\ReviewController::class);
