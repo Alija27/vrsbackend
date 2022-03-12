@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users=User::with('vendor')->get();
+        $users = User::with('vendor')->get();
         return response()->json($users);
     }
 
@@ -29,26 +29,26 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $data=$request->validate([
-            "name"=>["required"],
-            "email"=>["required"],
-            "phone"=>["required"],
-            "address"=>["required"],
-            "password"=>["required"],
-            "role"=>["required"],
-            "image"=>["nullable",'image','mimes:png,jpeg,gif']
+        $data = $request->validate([
+            "name" => ["required"],
+            "email" => ["required", "email"],
+            "phone" => ["required", "numeric", "min:10"],
+            "address" => ["required"],
+            "password" => ["required"],
+            "role" => ["required"],
+            "image" => ["nullable", 'image', 'mimes:png,jpeg,gif']
         ]);
-        
-            $ext=$request->file('image')->extension();
-            $name=Str::random(20);
-            $path=$name.".".$ext;
 
-            $data['image']=$request->file('image')->storeAs('public/images',$path);
-            
-            
-       
+        $ext = $request->file('image')->extension();
+        $name = Str::random(20);
+        $path = $name . "." . $ext;
+        $request->file('image')->storeAs('public/images', $path);
+        $data['image'] = "images/" . $path;
+
+
+
         User::create($data);
-        return response()->json(['message' =>'User Created  Sucessfully']);
+        return response()->json(['message' => 'User Created  Sucessfully']);
     }
 
     /**
@@ -59,6 +59,8 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $user->load('vendor');
+
         return response()->json($user);
     }
 
@@ -71,31 +73,32 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        
-
-        $data=$request->validate([
-            "name"=>["required"],
-            "email"=>["required"],
-            "phone"=>["required"],
-            "address"=>["required"],
-            "password"=>["required"],
-            "role"=>["required"],
-            "image"=>["nullable",'image','mimes:png,jpeg,gif']
+        $data = $request->validate([
+            "name" => ["required"],
+            "email" => ["required", "email", "unique:users,email," . $user->id],
+            "phone" => ["required", "numeric", "min:10"],
+            "address" => ["required"],
+            // "password" => ["required"],
+            "role" => ["required"],
+            "image" => ["nullable", 'image', 'mimes:png,jpeg,gif']
         ]);
-        
-        /* $ext=$request->file('image')->extension();
-        $name=Str::random(20);
-        $path=$name.".".$ext;
 
-        $data['image']= $request->file('image')->storeAs('public/images',$path);
-        
-            if($user->image){
-            Storage::delete('public/'.$user->imgae);
+
+        if ($request->hasFile('image')) {
+            $ext = $request->file('image')->extension();
+            $name = Str::random(20);
+            $path = $name . "." . $ext;
+            $request->file('image')->storeAs('public/images', $path);
+            $data['image'] = "images/" . $path;
+
+            if ($user->image) {
+                Storage::delete('public/' . $user->image);
             }
-         */
+        }
+
         $user->update($data);
 
-        return response()->json(['message' =>'User Updated Sucessfully']);
+        return response()->json(['message' => 'User Updated Sucessfully']);
     }
 
     /**
@@ -106,7 +109,11 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
-        return response()->json("User deleted Sucessfully");
+        try {
+            $user->delete();
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'You cannot delete user with related data!'], 401);
+        }
+        return response()->json(['message' => "User deleted Sucessfully"]);
     }
 }

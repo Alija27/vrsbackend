@@ -16,20 +16,20 @@ class VehicleSeeder extends Seeder
     public function run()
     {
         Vehicle::create([
-            'vendor_id'=>1,
-            'name'=>"abc",
-            'type_id'=>1,
-            'model'=>"xyz",
-            'color'=>"red",
-            'total_seats'=>"4",
-            'rental_price'=>"2000",
-            'description'=>"kadak",
-            'terms'=>"kakdsalk",
-            'image'=>"image.png",
-            'condition'=>"thik",
-            'is_available'=>true,
-            'has_driver'=>true,
-            'is_approved'=>true,
+            'vendor_id' => 1,
+            'name' => "abc",
+            'type_id' => 1,
+            'model' => "xyz",
+            'color' => "red",
+            'total_seats' => "4",
+            'rental_price' => "2000",
+            'description' => "kadak",
+            'terms' => "kakdsalk",
+            'image' => "image.png",
+            'condition' => "thik",
+            'is_available' => true,
+            'has_driver' => true,
+            'is_approved' => true,
         ]);
     }
 }

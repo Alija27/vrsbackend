@@ -17,7 +17,7 @@ class VendorController extends Controller
      */
     public function index()
     {
-        $vendors=Vendor::with('user')->get();
+        $vendors = Vendor::with('user')->get();
         return response()->json($vendors);
     }
 
@@ -29,21 +29,21 @@ class VendorController extends Controller
      */
     public function store(Request $request)
     {
-        $data=$request->validate([
-            "name"=>["required"],
-            "address"=>["required"],
-            "phone"=>["required"],
-            "user_id"=>["required","exists:users,id"],
-            "image"=>["nullable",'image','mimes:png,jpeg,gif']
+        $data = $request->validate([
+            "name" => ["required"],
+            "address" => ["required"],
+            "phone" => ["required", "numeric", "min:10"],
+            "user_id" => ["required", "exists:users,id"],
+            "image" => ["nullable", "image", 'mimes:png,jpeg,gif']
         ]);
-        $ext=$request->file('image')->extension();
-            $name=Str::random(20);
-            $path=$name.".".$ext;
+        $ext = $request->file('image')->extension();
+        $name = Str::random(20);
+        $path = $name . "." . $ext;
 
-            $data['image']=$request->file('image')->storeAs('public/images',$path);
-            
+        $data['image'] = $request->file('image')->storeAs('public/images', $path);
+
         Vendor::create($data);
-        return response()->json(['message'=>'Vendor Created sucessfully'], 201);
+        return response()->json(['message' => 'Vendor Created sucessfully'], 201);
     }
 
     /**
@@ -66,15 +66,15 @@ class VendorController extends Controller
      */
     public function update(Request $request, Vendor $vendor)
     {
-        $data=$request->validate([
-            "name"=>["required"],
-            "address"=>["required"],
-            "phone"=>["required"],
-            "user_id"=>["required","exists:users,id"],
-            "image"=>["nullable",'image','mimes:png,jpeg,gif']
+        $data = $request->validate([
+            "name" => ["required"],
+            "address" => ["required"],
+            "phone" => ["required", "numeric", "min:10"],
+            "user_id" => ["required", "exists:users,id"],
+            "image" => ["nullable", 'image', 'mimes:png,jpeg,gif']
         ]);
         $vendor->update($data);
-        return response()->json(['message'=>'Vendor Created sucessfully']);
+        return response()->json(['message' => 'Vendor Created sucessfully']);
     }
 
     /**
@@ -86,11 +86,11 @@ class VendorController extends Controller
     public function destroy(Vendor $vendor)
     {
 
-        DB::transaction(function () use($vendor) {
+        DB::transaction(function () use ($vendor) {
             // DB::delete('delete from vendors where id =' . $vendor->id);
             $vendor->user()->delete();
             $vendor->delete();
         });
-        return response()->json(["message"=>"Vendor deleted Sucessfully"]);
+        return response()->json(["message" => "Vendor deleted Sucessfully"]);
     }
 }

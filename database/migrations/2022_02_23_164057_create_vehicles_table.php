@@ -27,8 +27,8 @@ return new class extends Migration
             $table->string('image');
             $table->string('condition');
             $table->boolean('is_available');
-            $table->string('has_driver')->default("False");
-            $table->string('is_approved')->default("False");
+            $table->boolean('has_driver');
+            $table->boolean('is_approved');
             $table->timestamps();
         });
     }

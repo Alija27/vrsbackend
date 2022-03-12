@@ -15,7 +15,7 @@ class ReviewController extends Controller
      */
     public function index()
     {
-        $reviews = Review::with('user')->get();
+        $reviews = Review::with(['rental', 'user'])->get();
         return response()->json($reviews);
     }
 
@@ -27,11 +27,11 @@ class ReviewController extends Controller
      */
     public function store(Request $request)
     {
-        $data=$request->validate([
+        $data = $request->validate([
             "rental_id" => ["required", "exists:rentals,id"],
             "user_id" => ["required", "exists:users,id"],
             "message" => ["required"],
-            "stars" => ["required|min:0,max:5"],
+            "stars" => ["required|min:0|max:5"],
         ]);
         Review::create($data);
         return response()->noContent();
@@ -57,7 +57,7 @@ class ReviewController extends Controller
      */
     public function update(Request $request, Review $review)
     {
-        $data=$request->validate([
+        $data = $request->validate([
             "rental_id" => ["required", "exists:rentals,id"],
             "user_id" => ["required", "exists:users,id"],
             "message" => ["required"],
