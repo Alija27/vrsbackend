@@ -16,11 +16,11 @@ class VendorSeeder extends Seeder
     public function run()
     {
         Vendor::create([
-            'name'=>'Vendorname',
-            'user_id'=>2,
-            'address'=>'gaindakot',
-            'phone'=>'9812919812',
-            'image'=>"image.png",
+            'name' => 'Vendorname',
+            'user_id' => 2,
+            'address' => 'gaindakot',
+            'phone' => '9812919812',
+            'image' => "images/2Z1LVcumX95Lr0lfYCph.jpg",
         ]);
     }
 }

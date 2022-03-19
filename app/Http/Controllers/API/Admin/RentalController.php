@@ -15,7 +15,7 @@ class RentalController extends Controller
      */
     public function index()
     {
-        $rentals = Rental::with(['user', 'vehicles'])->get();
+        $rentals = Rental::with(['user', 'vehicle'])->get();
         return response()->json($rentals);
     }
 
@@ -30,14 +30,12 @@ class RentalController extends Controller
         $data = $request->validate([
             "user_id" => ["required", "exists:users,id"],
             "vehicle_id" => ["required", "exists:vehicles,id"],
-            "start_date" => ["required", "date", "after:" . now()->addDays(1)->startOfDay()],
+            "start_date" => ["required", "date", "after:" . now()/* ->addDays(1)->startOfDay() */],
             "end_date" => ["required", "date", "after:start_date"],
             "destination" => ["required"],
             "is_approved" => ["required"],
             "is_complete" => ["required"],
             "total_amount" => ["required"],
-            "citizenship_number" => ["required"],
-            "citizenship_image" => ["required"],
             "remarks" => ["required"],
         ]);
 
@@ -45,7 +43,7 @@ class RentalController extends Controller
 
         Rental::create($data);
 
-        return response()->noContent();
+        return response()->json(['message' => 'Rental Created Sucessfully']);
     }
 
     /**
@@ -56,7 +54,7 @@ class RentalController extends Controller
      */
     public function show(Rental $rental)
     {
-        $rental->load('vehicles');
+        $rental->load(['vehicle', 'user']);
         return response()->json($rental);
     }
 
@@ -72,14 +70,12 @@ class RentalController extends Controller
         $data = $request->validate([
             "user_id" => ["required", "exists:users,id"],
             "vehicle_id" => ["required", "exists:vehicles,id"],
-            "start_date" => ["required", "date", "after:" . now()->addDays(1)->startOfDay()],
+            "start_date" => ["required", "date", "after:" . now()/* ->addDays(1)->startOfDay() */],
             "end_date" => ["required", "date", "after:start_date"],
             "destination" => ["required"],
             "is_approved" => ["required"],
             "is_complete" => ["required"],
             "total_amount" => ["required"],
-            "citizenship_number" => ["required"],
-            "citizenship_image" => ["required"],
             "remarks" => ["required"],
         ]);
         $rental->update($data);

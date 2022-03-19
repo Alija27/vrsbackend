@@ -23,8 +23,6 @@ return new class extends Migration
             $table->boolean('is_approved');
             $table->boolean('is_complete');
             $table->string('total_amount');
-            $table->string('citizenship_number');
-            $table->string('citizenship_image');
             $table->string('remarks')->nullable();
             $table->timestamps();
         });

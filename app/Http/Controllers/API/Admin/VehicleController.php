@@ -15,7 +15,7 @@ class VehicleController extends Controller
      */
     public function index()
     {
-        $vehicles=Vehicle::all();
+        $vehicles = Vehicle::all();
         return response()->json($vehicles);
     }
 
@@ -27,24 +27,24 @@ class VehicleController extends Controller
      */
     public function store(Request $request)
     {
-        $data=$request->validate([
-            "name"=>["required"],
-            "vendor_id"=>["required","exists:users,id"],
-            "type_id"=>["required","exists:types,id"],
-            "model"=>["required"],
-            "color"=>["required"],
-            "total_seats"=>["required"],
-            "rental_price"=>["required"],
-            "description"=>["required"],
-            "terms"=>["required"],
-            "image"=>["required"],
-            "condition"=>["required"],
-            "is_available"=>["required"],
-            "has_driver"=>["required"],
-            "is_approved"=>["required"],
+        $data = $request->validate([
+            "name" => ["required"],
+            "vendor_id" => ["required", "exists:users,id"],
+            "type_id" => ["required", "exists:types,id"],
+            "model" => ["required"],
+            "color" => ["required"],
+            "total_seats" => ["required"],
+            "rental_price" => ["required"],
+            "description" => ["required"],
+            "terms" => ["required"],
+            "image" => ["required"],
+            "condition" => ["required"],
+            "is_available" => ["required"],
+            "has_driver" => ["required"],
+            "is_approved" => ["required"],
         ]);
         Vehicle::create($data);
-        return response()->noContent();
+        return response()->json(['message' => 'Vehicle Created sucessfully']);
     }
 
     /**
@@ -67,21 +67,21 @@ class VehicleController extends Controller
      */
     public function update(Request $request, Vehicle $vehicle)
     {
-        $data=$request->validate([
-            "name"=>["required"],
-            "vendor_id"=>["required","exists:users,id"],
-            "type_id"=>["required","exists:types,id"],
-            "model"=>["required"],
-            "color"=>["required"],
-            "total_seats"=>["required"],
-            "rental_price"=>["required"],
-            "description"=>["required"],
-            "terms"=>["required"],
-            "image"=>["required"],
-            "condition"=>["required"],
-            "is_available"=>["required"],
-            "has_driver"=>["required"],
-            "is_approved"=>["required"],
+        $data = $request->validate([
+            "name" => ["required"],
+            "vendor_id" => ["required", "exists:users,id"],
+            "type_id" => ["required", "exists:types,id"],
+            "model" => ["required"],
+            "color" => ["required"],
+            "total_seats" => ["required"],
+            "rental_price" => ["required"],
+            "description" => ["required"],
+            "terms" => ["required"],
+            "image" => ["required"],
+            "condition" => ["required"],
+            "is_available" => ["required"],
+            "has_driver" => ["required"],
+            "is_approved" => ["required"],
         ]);
         $vehicle->update($data);
         return response()->noContent();

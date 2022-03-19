@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'address' => 'gaindakot',
             'phone' => '9812919812',
-            'image' => 'images/8KXIGYz4n6PGmM9BD4P3.png',
+            'image' => 'images/XtY0eAQAutf1MmtP8fF2.gif',
             'password' => bcrypt('password'),
             'role' => 'Admin',
         ]);
@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
             'email' => 'vendor@gmail.com',
             'address' => 'gaindakot',
             'phone' => '9812919813',
-            'image' => 'images/8KXIGYz4n6PGmM9BD4P3.png',
+            'image' => 'images/XtY0eAQAutf1MmtP8fF2.gif',
             'password' => bcrypt('password'),
             'role' => 'Vendor',
         ]);
@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
             'email' => 'customer@gmail.com',
             'address' => 'gaindakot',
             'phone' => '9812919814',
-            'image' => 'images/8KXIGYz4n6PGmM9BD4P3.png',
+            'image' => 'images/XtY0eAQAutf1MmtP8fF2.gif',
             'password' => bcrypt('password'),
             'role' => 'Customer',
         ]);

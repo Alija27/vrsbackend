@@ -15,7 +15,7 @@ class TypeController extends Controller
      */
     public function index()
     {
-        $types=Type::with('vehicles')->get();
+        $types = Type::with('vehicles')->get();
         return response()->json($types);
     }
 
@@ -27,11 +27,11 @@ class TypeController extends Controller
      */
     public function store(Request $request)
     {
-        $data=$request->validate([
-            'name'=>["required"]
+        $data = $request->validate([
+            'name' => ["required"]
         ]);
         Type::create($data);
-        return response()->noContent();
+        return response()->json(['message' => 'Vehicle type Created sucessfully']);
     }
 
     /**
@@ -42,7 +42,8 @@ class TypeController extends Controller
      */
     public function show(Type $type)
     {
-     return response()->json($type);   
+        $type->load('vehicles');
+        return response()->json($type);
     }
 
     /**
@@ -54,11 +55,11 @@ class TypeController extends Controller
      */
     public function update(Request $request, Type $type)
     {
-        $data=$request->validate([
-            'name'=>['required']
+        $data = $request->validate([
+            'name' => ['required']
         ]);
         $type->update($data);
-        return response()->noContent();
+        return response()->json(['message' => 'Vehicle type updated sucessfully']);
     }
 
     /**
@@ -69,7 +70,7 @@ class TypeController extends Controller
      */
     public function destroy(Type $type)
     {
-     $type->delete();
-     return response()->noContent();
+        $type->delete();
+        return response()->json(['message' => 'Vehicle type deleted  sucessfully']);
     }
 }

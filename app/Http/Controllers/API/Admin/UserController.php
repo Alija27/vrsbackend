@@ -36,14 +36,17 @@ class UserController extends Controller
             "address" => ["required"],
             "password" => ["required"],
             "role" => ["required"],
-            "image" => ["nullable", 'image', 'mimes:png,jpeg,gif']
+            "image" => ["required", 'image', 'mimes:png,jpeg,gif']
         ]);
 
-        $ext = $request->file('image')->extension();
-        $name = Str::random(20);
-        $path = $name . "." . $ext;
-        $request->file('image')->storeAs('public/images', $path);
-        $data['image'] = "images/" . $path;
+        if ($request->file('image')) {
+            $ext = $request->file('image')->extension();
+            $name = Str::random(20);
+            $path = $name . "." . $ext;
+            $request->file('image')->storeAs('public/images', $path);
+            $data['image'] = "images/" . $path;
+        }
+
 
 
 

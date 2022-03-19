@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class VendorController extends Controller
 {
@@ -34,13 +35,14 @@ class VendorController extends Controller
             "address" => ["required"],
             "phone" => ["required", "numeric", "min:10"],
             "user_id" => ["required", "exists:users,id"],
-            "image" => ["nullable", "image", 'mimes:png,jpeg,gif']
+            "image" => ["required", "image", 'mimes:png,jpeg,gif']
         ]);
         $ext = $request->file('image')->extension();
         $name = Str::random(20);
         $path = $name . "." . $ext;
 
-        $data['image'] = $request->file('image')->storeAs('public/images', $path);
+        $request->file('image')->storeAs('public/images', $path);
+        $data['image'] = "images/" . $path;
 
         Vendor::create($data);
         return response()->json(['message' => 'Vendor Created sucessfully'], 201);
@@ -54,6 +56,7 @@ class VendorController extends Controller
      */
     public function show(Vendor $vendor)
     {
+        $vendor->load('user');
         return response()->json($vendor);
     }
 
@@ -71,8 +74,19 @@ class VendorController extends Controller
             "address" => ["required"],
             "phone" => ["required", "numeric", "min:10"],
             "user_id" => ["required", "exists:users,id"],
-            "image" => ["nullable", 'image', 'mimes:png,jpeg,gif']
         ]);
+        if ($request->hasFile('image')) {
+            $request->validate(["image" => ['image', 'mimes:png,jpeg,gif']]);
+            $ext = $request->file('image')->extension();
+            $name = Str::random(20);
+            $path = $name . "." . $ext;
+            $request->file('image')->storeAs('public/images', $path);
+            $data['image'] = "images/" . $path;
+
+            if ($vendor->image) {
+                Storage::delete('public/' . $vendor->image);
+            }
+        }
         $vendor->update($data);
         return response()->json(['message' => 'Vendor Created sucessfully']);
     }

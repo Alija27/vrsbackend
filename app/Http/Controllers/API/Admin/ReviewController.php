@@ -31,7 +31,7 @@ class ReviewController extends Controller
             "rental_id" => ["required", "exists:rentals,id"],
             "user_id" => ["required", "exists:users,id"],
             "message" => ["required"],
-            "stars" => ["required|min:0|max:5"],
+            "stars" => ["required"],
         ]);
         Review::create($data);
         return response()->noContent();
@@ -61,7 +61,7 @@ class ReviewController extends Controller
             "rental_id" => ["required", "exists:rentals,id"],
             "user_id" => ["required", "exists:users,id"],
             "message" => ["required"],
-            "stars" => ["required|min:0,max:5"],
+            "stars" => ["required"],
         ]);
         $review->update($data);
         return response()->noContent();
