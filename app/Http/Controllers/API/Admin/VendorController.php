@@ -18,7 +18,7 @@ class VendorController extends Controller
      */
     public function index()
     {
-        $vendors = Vendor::with('user')->get();
+        $vendors = Vendor::with(['user', 'vehicles'])->get();
         return response()->json($vendors);
     }
 
@@ -56,7 +56,7 @@ class VendorController extends Controller
      */
     public function show(Vendor $vendor)
     {
-        $vendor->load('user');
+        $vendor->load(['user', 'vehicle']);
         return response()->json($vendor);
     }
 

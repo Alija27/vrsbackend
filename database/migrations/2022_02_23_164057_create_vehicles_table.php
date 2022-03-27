@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vendor_id')->constrained();
+            $table->foreignId('location_id')->constrained();
             $table->string('name');
             $table->foreignId('type_id')->constrained();
             $table->string('model');
@@ -24,11 +25,11 @@ return new class extends Migration
             $table->string('rental_price');
             $table->string('description');
             $table->string('terms')->nullable();
-            $table->string('image');
+            $table->string('image')->require();
             $table->string('condition');
-            $table->boolean('is_available');
+            $table->boolean('is_available')->default(false);
             $table->boolean('has_driver');
-            $table->boolean('is_approved');
+            $table->boolean('is_approved')->default(false);
             $table->timestamps();
         });
     }

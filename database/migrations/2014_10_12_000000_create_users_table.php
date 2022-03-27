@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('address');
             $table->string('phone');
             $table->string('image')->nullable();
-            $table->string('role')->default("customer");
+            $table->string('role')->default("Customer");
             $table->rememberToken();
             $table->timestamps();
         });

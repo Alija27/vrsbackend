@@ -30,6 +30,7 @@ class VehicleSeeder extends Seeder
             'is_available' => true,
             'has_driver' => true,
             'is_approved' => true,
+            'location_id' => 1,
         ]);
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Location;
 use Illuminate\Http\Request;
 
+
 class LocationController extends Controller
 {
     /**
@@ -15,7 +16,8 @@ class LocationController extends Controller
      */
     public function index()
     {
-        //
+        $locations = Location::with('vehicle')->get();
+        return response()->json($locations);
     }
 
     /**
@@ -26,7 +28,15 @@ class LocationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            "name" => ["required"],
+            "longitude" => ["required"],
+            "latitude" => ["required"],
+        ]);
+
+        Location::create($data);
+
+        return response()->json(['message' => 'Location Created  Sucessfully']);
     }
 
     /**
@@ -37,7 +47,9 @@ class LocationController extends Controller
      */
     public function show(Location $location)
     {
-        //
+        $location->load('vehicle');
+
+        return response()->json($location);
     }
 
     /**
@@ -49,7 +61,15 @@ class LocationController extends Controller
      */
     public function update(Request $request, Location $location)
     {
-        //
+        $data = $request->validate([
+            "name" => ["required"],
+            "latitude" => ["required"],
+            "longitude" => ["required"]
+        ]);
+
+        $location->update($data);
+
+        return response()->json(['message' => 'Location Updated Sucessfully']);
     }
 
     /**
@@ -60,6 +80,12 @@ class LocationController extends Controller
      */
     public function destroy(Location $location)
     {
-        //
+        try {
+            $location->delete();
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'You cannot delete location with related data!'], 401);
+        }
+
+        return response()->json(['message' => "Location deleted Sucessfully"]);
     }
 }

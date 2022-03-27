@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Location extends Model
 {
-    protected $filable = ['cityname'];
+    protected $filable = ['name', 'longitude', 'latitude'];
+
     use HasFactory;
+
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicle::class);
+    }
 }

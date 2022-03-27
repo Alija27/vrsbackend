@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\FrontController;
+use App\Http\Controllers\API\Vendor\FrontVendorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,24 +17,45 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->group(function () {
-    // protected routes
-
-});
-
 Route::controller(AuthController::class)->group(function () {
     Route::post('/login', 'login');
     Route::post('/register', 'register');
     Route::post('/forgot', 'forget');
+    Route::post('/logout', 'logout');
 });
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'user']);
+
+// Admin Dashboard
+Route::middleware(['auth:sanctum'])->prefix('/admin')->group(function () {
+    Route::resource('users', \App\Http\Controllers\API\Admin\UserController::class);
+    Route::resource('vendors', \App\Http\Controllers\API\Admin\VendorController::class);
+    Route::resource('types', \App\Http\Controllers\API\Admin\TypeController::class);
+    Route::resource('vehicles', \App\Http\Controllers\API\Admin\VehicleController::class);
+    Route::resource('rentals', \App\Http\Controllers\API\Admin\RentalController::class);
+    Route::resource('reviews', \App\Http\Controllers\API\Admin\ReviewController::class);
+    Route::resource('locations', \App\Http\Controllers\API\Admin\LocationController::class);
 });
 
-Route::resource('users', \App\Http\Controllers\API\Admin\UserController::class);
-Route::resource('vendors', \App\Http\Controllers\API\Admin\VendorController::class);
-Route::resource('types', \App\Http\Controllers\API\Admin\TypeController::class);
-Route::resource('vehicles', \App\Http\Controllers\API\Admin\VehicleController::class);
-Route::resource('rentals', \App\Http\Controllers\API\Admin\RentalController::class);
-Route::resource('reviews', \App\Http\Controllers\API\Admin\ReviewController::class);
+// Route::middleware('auth:sactum', 'vendor')->group(function () {
+//     Route::resource('vendors', \App\Http\Controllers\API\Admin\VendorController::class);
+// });
+Route::middleware('auth:sanctum')->controller(FrontVendorController::class)->group(function () {
+    //Route::get('/addVehicle', 'addVehicle');
+    Route::post('/addvehicle', 'addVehicle');
+    Route::post('/updatevehicle', 'updateVehicle');
+    Route::get('/locations', 'locations');
+    Route::get('/registeredvehicles', 'revehicles');
+    Route::post('/vehiclestatus/{vehicle}', 'vehicleStatus');
+});
+
+Route::controller(FrontController::class)->group(function () {
+    Route::get('/types', 'types');
+    Route::get('/availablevehicles', 'availablevehicles');
+
+    Route::post('/vehicles', 'vehicles');
+    Route::get('/locations', 'locations');
+    Route::post('/users', 'users');
+    Route::get('/vehicle/{vehicle}', 'showVehicle');
+    Route::post('/checkvehicle/{vehicle}', 'checkVehicle');
+});

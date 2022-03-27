@@ -21,4 +21,3 @@ Route::get('/', function () {
 Route::get('/test', function () {
     throw new \Exception("somethn went wrong");
 });
-
