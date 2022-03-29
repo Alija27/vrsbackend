@@ -36,7 +36,8 @@ class UserController extends Controller
             "address" => ["required"],
             "password" => ["required"],
             "role" => ["required"],
-            "image" => ["required", 'image', 'mimes:png,jpeg,gif']
+            "image" => ["required", 'image', 'mimes:png,jpeg,gif'],
+
         ]);
 
         if ($request->file('image')) {

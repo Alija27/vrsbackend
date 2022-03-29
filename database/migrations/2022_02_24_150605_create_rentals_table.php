@@ -20,8 +20,8 @@ return new class extends Migration
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->string('destination');
-            $table->boolean('is_approved');
-            $table->boolean('is_complete');
+            $table->boolean('is_approved')->default(0);
+            $table->boolean('is_complete')->default(0);
             $table->string('total_amount');
             $table->string('remarks')->nullable();
             $table->timestamps();

@@ -58,4 +58,14 @@ Route::controller(FrontController::class)->group(function () {
     Route::post('/users', 'users');
     Route::get('/vehicle/{vehicle}', 'showVehicle');
     Route::post('/checkvehicle/{vehicle}', 'checkVehicle');
+    Route::post('/requestVehicle', 'requestVehicle');
+    Route::get('/vehicleReview', 'VehicleReview');
+
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::put('/updateProfile', 'updateProfile');
+        Route::get('/getMyBookings', 'myBookedVehicles');
+        Route::post('/checkUserDetails', 'checkUserDetails');
+        Route::get('/bookConfirmed', 'BookConfirmed');
+    });
 });

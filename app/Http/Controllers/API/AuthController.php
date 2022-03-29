@@ -27,21 +27,29 @@ class AuthController extends Controller
         $data = $request->validate([
             "name" => ["required"],
             "email" => ["required", "email"],
-            "phone" => ["required", "numeric", "min:10"],
+            "phone" => ["required", "numeric", "min:10", 'regex:/((98)|(97))([0-9]){8}/'],
             "address" => ["required"],
-            "password" => ["required"],
             "role" => ["required"],
-            "image" => ["required", 'image', 'mimes:png,jpeg,gif']
+            "image" => ["required",  "mimes:png,jpeg,gif"],
+            "citizenship_number" => ["required"],
+            "citizenship_image" => ["required",  "mimes:png,jpeg,gif"]
         ]);
+        $data['password'] = bcrypt($request->password);
 
-        if ($request->file('image')) {
+        if ($request->hasFile('image')) {
             $ext = $request->file('image')->extension();
             $name = Str::random(20);
             $path = $name . "." . $ext;
             $request->file('image')->storeAs('public/images', $path);
             $data['image'] = "images/" . $path;
         }
-
+        if ($request->hasFile('citizenship_image')) {
+            $ext = $request->file('citizenship_image')->extension();
+            $name = Str::random(20);
+            $path = $name . "." . $ext;
+            $request->file('citizenship_image')->storeAs('public/images', $path);
+            $data['citizenship_image'] = "images/" . $path;
+        }
 
 
 

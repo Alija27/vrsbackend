@@ -23,6 +23,8 @@ class UserSeeder extends Seeder
             'image' => 'images/XtY0eAQAutf1MmtP8fF2.gif',
             'password' => bcrypt('password'),
             'role' => 'Admin',
+            'citizenship_number' => '5698',
+            'citizenship_image' => 'images/XtY0eAQAutf1MmtP8fF2.gif'
         ]);
 
         User::create([
@@ -33,6 +35,8 @@ class UserSeeder extends Seeder
             'image' => 'images/XtY0eAQAutf1MmtP8fF2.gif',
             'password' => bcrypt('password'),
             'role' => 'Vendor',
+            'citizenship_number' => '56988',
+            'citizenship_image' => 'images/XtY0eAQAutf1MmtP8fF2.gif'
         ]);
 
         User::create([
@@ -43,6 +47,8 @@ class UserSeeder extends Seeder
             'image' => 'images/XtY0eAQAutf1MmtP8fF2.gif',
             'password' => bcrypt('password'),
             'role' => 'Customer',
+            'citizenship_number' => '569898',
+            'citizenship_image' => 'images/XtY0eAQAutf1MmtP8fF2.gif'
         ]);
     }
 }

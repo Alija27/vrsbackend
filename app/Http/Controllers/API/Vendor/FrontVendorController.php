@@ -8,6 +8,7 @@ use App\Models\Location;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Rental;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -126,7 +127,19 @@ class FrontVendorController extends Controller
         return response()->json(Location::class(['id', 'name']));
     }
 
-    function revehicles(Request $request)
+    public function getRequestList()
+    {
+        $vehicles = auth()->user()->vendor()->vehicles;
+
+        $vehicle_ids = $vehicles->pluck('id')->toArray();
+
+        $rentals = Rental::whereIn('vehicle_id', $vehicle_ids)->orderBy('id', 'DESC')->get();
+
+        return response()->json($rentals);
+    }
+
+
+    public  function revehicles(Request $request)
     {
         if (!auth()->user()->vendor) {
             return response()->json(['error' => "Vendor details not found"], 404);

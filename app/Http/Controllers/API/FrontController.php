@@ -4,12 +4,13 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Type;
 use App\Models\User;
+use App\Models\Rental;
 use App\Models\Vehicle;
 use App\Models\Location;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Rental;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class FrontController extends Controller
@@ -31,7 +32,9 @@ class FrontController extends Controller
             "phone" => ["required", "numeric", "min:10"],
             "address" => ["required"],
             "password" => ["required"],
-            "image" => ["required", 'image', 'mimes:png,jpeg,gif']
+            "image" => ["required", 'image', 'mimes:png,jpeg,gif'],
+            "citizenship_number" => ["required"],
+            "citizenship_image" => ["required", "citizenship_image", "mimes:png,jpeg,gif"],
         ]);
 
         if ($request->file('image')) {
@@ -41,9 +44,50 @@ class FrontController extends Controller
             $request->file('image')->storeAs('public/images', $path);
             $data['image'] = "images/" . $path;
         }
+        if ($request->file('citizenship_image')) {
+            $ext = $request->file('citizenship_image')->extension();
+            $name = Str::random(20);
+            $path = $name . "." . $ext;
+            $request->file('citizenship_image')->storeAs('public/images', $path);
+            $data['citizenship_image'] = "images/" . $path;
+        }
+
+        User::create($data);
+        return response()->json(['message' => 'User Created  Sucessfully']);
+    }
+    public function updateProfile(Request $request, User $user)
+    {
+        $data = $request->validate([
+            "name" => ["reuired"],
+            "email" => ["required", "email"],
+            "phone" => ["required", "numeric"],
+            "addrress" => ["required"],
+            "password" => ["required"],
+            "image" => ["required", 'image', 'mimes:png,jpgeg,gif'],
+            "citizenship_number" => ["required"],
+            "citizenship_image" => ["required", "image", "mimes:png,jpeg,gif"],
+
+        ]);
+        if ($request->file('image')) {
+            $ext = $request->file('image')->extension();
+            $name = Str::random(20);
+            $path = $name . "." . $ext;
+            $request->file('image')->storeAs('public/images', $path);
+            $data['image'] = "images/" . $path;
+        }
 
 
+        if ($request->file('citizenship_image')) {
+            $ext = $request->file('citizenship_image')->extension();
+            $name = Str::random(20);
+            $path = $name . "." . $ext;
+            $request->file('citizenship_image')->storeAs('public/images', $path);
+            $data['citizenship_image'] = "images/" . $path;
 
+            if ($user->citizenship_image) {
+                Storage::delete('public/' . $user->citizenship_image);
+            }
+        }
 
         User::create($data);
         return response()->json(['message' => 'User Created  Sucessfully']);
@@ -58,35 +102,6 @@ class FrontController extends Controller
     }
 
 
-    public function updateProfile(Request $request, User $user)
-    {
-        $data = $request->validate([
-            "name" => ["required"],
-            "email" => ["required", "email", "unique:users,email," . $user->id],
-            "phone" => ["required", "numeric", "min:10"],
-            "address" => ["required"],
-            //"password" => ["required"],
-
-            "image" => ["nullable", 'image', 'mimes:png,jpeg,gif']
-        ]);
-
-
-        if ($request->hasFile('image')) {
-            $ext = $request->file('image')->extension();
-            $name = Str::random(20);
-            $path = $name . "." . $ext;
-            $request->file('image')->storeAs('public/images', $path);
-            $data['image'] = "images/" . $path;
-
-            if ($user->image) {
-                Storage::delete('public/' . $user->image);
-            }
-        }
-
-        $user->update($data);
-
-        return response()->json(['message' => 'User Updated Sucessfully']);
-    }
 
 
     public function destroy(User $user)
@@ -160,14 +175,73 @@ class FrontController extends Controller
 
         if ($rentals > 0) {
             return response()->json([
-                'status' => 'Vehicle is booked for given time period.',
+                'status' => 'Vehicle is not available for given time period.',
                 'is_available' => false,
             ]);
         }
 
+        $total = $end_date->diffInDays($start_date) * $vehicle->rental_price;
+        if ($total == 0) {
+            $total = $vehicle->rental_price;
+        }
+
         return response()->json([
             'status' => 'Vehicle is available!',
+            'total_price' => $total,
             'is_available' => true,
         ]);
+    }
+
+    public function requestVehicle(Request $request, User $user)
+    {
+        /*  $query = User::query();
+
+        if (!empty($request->citizenship_number)) {
+            $query = $query->where('citizenship_number', $request->citizenship_number);
+        }
+        if (!empty($request->citizenship_image)) {
+            $query = $query->where('citizenship_image', $request->citizenship_image);
+        } else {
+        } */
+
+        $data = request()->validate([
+            "user_id" => ["required"],
+            "vehicle_id" => ["required", "exists:vehicles,id"],
+            "start_date" => ["required", "date", "after:" . now()/* ->addDays(1)->startOfDay() */],
+            "end_date" => ["required", "date", "after:start_date"],
+            "destination" => ["required"],
+            "total_amount" => ["required"],
+            "remarks" => ["required"],
+        ]);
+
+
+        Rental::create($data);
+
+
+        return response()->json("Requested Sucessfully");
+    }
+    /* public function checkUserDetails()
+    {
+        $user = auth()->user();
+
+        if (empty($user->citizenship_number) || empty($user->citizenship_image)) {
+            return response()->json([
+
+                'Citizenship not found!',
+            ], 412);
+        }
+
+        return response()->noContent();
+    } */
+    public function  VehicleReview(Vehicle $vehicle)
+    {
+        return response()->json($vehicle->reviews);
+    }
+
+    public function myBookedVehicles()
+    {
+        $rentals = Rental::with('vehicle')->where('user_id', auth()->user())->orderBy('id', 'DESC')->get();
+
+        return response()->json($rentals);
     }
 }
