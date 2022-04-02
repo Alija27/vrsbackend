@@ -21,7 +21,7 @@ class RentalSeeder extends Seeder
             "start_date" => "2023/2/2",
             "end_date" => "2023/2/3",
             "destination" => "Langtang",
-            "is_approved" => true,
+            "is_approved" => "Pending",
             "is_complete" => true,
             "total_amount" => "20000",
             "remarks" => "i98ruwe",

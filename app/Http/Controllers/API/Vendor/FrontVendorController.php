@@ -26,6 +26,19 @@ class FrontVendorController extends Controller
         ]);
     }
 
+    public function vehicleApproved(Request $request, Rental $rental)
+    {
+        $request->validate([
+            "is_approved" => ['required'],
+        ]);
+        $rental->update([
+            'is_approved' => $request->is_approved
+        ]);
+        return response()->json(['message' => "Status Updated"]);
+    }
+
+
+
     public function addVehicle(Request $request)
     {
         $data = $request->validate([
@@ -127,17 +140,21 @@ class FrontVendorController extends Controller
         return response()->json(Location::class(['id', 'name']));
     }
 
-    public function getRequestList()
+    public function getRequestList(Request $request)
     {
-        $vehicles = auth()->user()->vendor()->vehicles;
+        if (!auth()->user()->vendor) {
+            return response()->json(['error' => "Vendor details not found"], 404);
+        }
+
+        $vehicles = auth()->user()->vendor->vehicles;
+
 
         $vehicle_ids = $vehicles->pluck('id')->toArray();
 
-        $rentals = Rental::whereIn('vehicle_id', $vehicle_ids)->orderBy('id', 'DESC')->get();
+        $rentals = Rental::with(['user', 'vehicle'])->whereIn('vehicle_id', $vehicle_ids)->orderBy('id', 'DESC')->get();
 
         return response()->json($rentals);
     }
-
 
     public  function revehicles(Request $request)
     {

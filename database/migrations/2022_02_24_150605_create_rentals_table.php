@@ -20,7 +20,7 @@ return new class extends Migration
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->string('destination');
-            $table->boolean('is_approved')->default(0);
+            $table->string('is_approved')->default("Pending");
             $table->boolean('is_complete')->default(0);
             $table->string('total_amount');
             $table->string('remarks')->nullable();

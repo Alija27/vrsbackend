@@ -47,12 +47,13 @@ Route::middleware('auth:sanctum')->controller(FrontVendorController::class)->gro
     Route::get('/locations', 'locations');
     Route::get('/registeredvehicles', 'revehicles');
     Route::post('/vehiclestatus/{vehicle}', 'vehicleStatus');
+    Route::get('/getRequestList', 'getRequestList');
+    Route::put('/changeRentalStatus/{rental}', 'vehicleApproved');
 });
 
 Route::controller(FrontController::class)->group(function () {
     Route::get('/types', 'types');
     Route::get('/availablevehicles', 'availablevehicles');
-
     Route::post('/vehicles', 'vehicles');
     Route::get('/locations', 'locations');
     Route::post('/users', 'users');
@@ -61,11 +62,11 @@ Route::controller(FrontController::class)->group(function () {
     Route::post('/requestVehicle', 'requestVehicle');
     Route::get('/vehicleReview', 'VehicleReview');
 
-
     Route::middleware('auth:sanctum')->group(function () {
         Route::put('/updateProfile', 'updateProfile');
         Route::get('/getMyBookings', 'myBookedVehicles');
         Route::post('/checkUserDetails', 'checkUserDetails');
         Route::get('/bookConfirmed', 'BookConfirmed');
+        Route::post('/vendor-register', 'VendorRegister');
     });
 });

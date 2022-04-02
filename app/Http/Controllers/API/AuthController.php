@@ -54,7 +54,7 @@ class AuthController extends Controller
 
 
         User::create($data);
-        return response()->json(['message' => 'Register  Sucessfully']);
+        return response()->json(['message' => 'Register Sucessfully']);
     }
 
     public function login(Request $request)

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Type;
 use App\Models\User;
 use App\Models\Rental;
+use App\Models\Vendor;
 use App\Models\Vehicle;
 use App\Models\Location;
 use Illuminate\Support\Str;
@@ -55,6 +56,25 @@ class FrontController extends Controller
         User::create($data);
         return response()->json(['message' => 'User Created  Sucessfully']);
     }
+    public function VendorRegister(Request $request)
+    {
+        $data = $request->validate([
+            "user_id" => ["required"],
+            "name" => ["required"],
+            "phone" => ["required"],
+            "address" => ["required"],
+            "image" => ["required", "mimes:jpg,png,jpeg,gif"]
+        ]);
+        if ($request->file('image')) {
+            $ext = $request->file('image')->extension();
+            $name = Str::random(20);
+            $path = $name . "." . $ext;
+            $request->file('image')->storeAs('public/images', $path);
+            $data['image'] = "images/" . $path;
+        }
+        Vendor::create($data);
+        return response()->json(["message" => "Vendor"]);
+    }
     public function updateProfile(Request $request, User $user)
     {
         $data = $request->validate([
@@ -74,6 +94,10 @@ class FrontController extends Controller
             $path = $name . "." . $ext;
             $request->file('image')->storeAs('public/images', $path);
             $data['image'] = "images/" . $path;
+
+            if ($user->image) {
+                Storage::delete('public/' . $user->image);
+            }
         }
 
 
@@ -149,6 +173,17 @@ class FrontController extends Controller
     {
         $vehicles = Vehicle::where('is_available', true)->get();
         return response()->json($vehicles);
+    }
+
+    public function CancelBooking(Request $request, Rental $rental)
+    {
+        $request->validate([
+            "is_approved" => ['required'],
+        ]);
+        $rental->update([
+            'is_approved' => $request->is_approved
+        ]);
+        return response()->json(['message' => "Status Updated"]);
     }
 
     public function checkVehicle(Request $request, Vehicle $vehicle)
@@ -240,7 +275,7 @@ class FrontController extends Controller
 
     public function myBookedVehicles()
     {
-        $rentals = Rental::with('vehicle')->where('user_id', auth()->user())->orderBy('id', 'DESC')->get();
+        $rentals = Rental::with('vehicle')->where('user_id', auth()->user()->id)->orderBy('id', 'DESC')->get();
 
         return response()->json($rentals);
     }
