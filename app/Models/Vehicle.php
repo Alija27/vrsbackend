@@ -11,7 +11,7 @@ class Vehicle extends Model
     protected $fillable = [
         'name',
         'vendor_id',
-        'type_id',  'model',
+        'type_id',  'model', 'brand',
         'color', 'total_seats',
         'rental_price',
         'description', 'terms', 'image',
@@ -23,6 +23,11 @@ class Vehicle extends Model
     public function vendor()
     {
         return $this->belongsTo(Vendor::class);
+    }
+
+    public function rentals()
+    {
+        return $this->belongsTo(Rental::class);
     }
 
     public function type()

@@ -8,6 +8,7 @@ use App\Models\Location;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Vendor;
 use App\Models\Rental;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -47,6 +48,7 @@ class FrontVendorController extends Controller
             "type_id" => ["required", "exists:types,id"],
             "model" => ["required"],
             "color" => ["required"],
+            "brand" => ["required"],
             "total_seats" => ["required"],
             "rental_price" => ["required"],
             "description" => ["required"],
@@ -79,6 +81,7 @@ class FrontVendorController extends Controller
             "vendor_id" => ["required", "exists:users,id"],
             "type_id" => ["required", "exists:types,id"],
             "model" => ["required"],
+            "brand" => ["required"],
             "color" => ["required"],
             "total_seats" => ["required"],
             "rental_price" => ["required"],
@@ -104,10 +107,9 @@ class FrontVendorController extends Controller
             if ($vehicle->image) {
                 Storage::delete('public/' . $vehicle->image);
             }
-
-            $vehicle->update($data);
-            return response()->json(['message' => 'Vehicle Created sucessfully']);
         }
+        $vehicle->update($data);
+        return response()->json(['message' => 'Vehicle Updated sucessfully']);
     }
 
     public function showType(Type $type)
@@ -165,5 +167,51 @@ class FrontVendorController extends Controller
         $vehicles = auth()->user()->vendor->vehicles;
 
         return response()->json($vehicles);
+    }
+
+    /* public  function revehiclesbyID(Request $request)
+    {
+        if (!auth()->user()->vendor) {
+            return response()->json(['error' => "Vendor details not found"], 404);
+        }
+
+        $vehicles = auth()->user()->vendor->vehicles;
+
+        return response()->json($vehicles);
+    } */
+    public function revehicleid(Vehicle $vehicle)
+    {
+        $vehicle->load(['vendor', 'type', 'location']);
+        return response()->json($vehicle);
+    }
+
+    public function VendorEdit(Request $request, Vendor $vendor)
+    {
+        $data = $request->validate([
+            "user_id" => ["required"],
+            "name" => ["required"],
+            "phone" => ["required"],
+            "address" => ["required"],
+
+        ]);
+        if ($request->file('image')) {
+            $ext = $request->file('image')->extension();
+            $name = Str::random(20);
+            $path = $name . "." . $ext;
+            $request->file('image')->storeAs('public/images', $path);
+            $data['image'] = "images/" . $path;
+
+            if ($vendor->image) {
+                Storage::delete('public/' . $vendor->image);
+            }
+        }
+
+        $vendor->update($data);
+        return response()->json(["message" => "Vendor"]);
+    }
+    public function vendorId(Vendor $vendor)
+    {
+        $vendor->load(['vehicles']);
+        return response()->json($vendor);
     }
 }

@@ -16,7 +16,7 @@ class LocationController extends Controller
      */
     public function index()
     {
-        $locations = Location::with('vehicle')->get();
+        $locations = Location::with('vehicles')->get();
         return response()->json($locations);
     }
 
@@ -47,7 +47,7 @@ class LocationController extends Controller
      */
     public function show(Location $location)
     {
-        $location->load('vehicle');
+        $location->load('vehicles');
 
         return response()->json($location);
     }

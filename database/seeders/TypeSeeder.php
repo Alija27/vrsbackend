@@ -16,7 +16,19 @@ class TypeSeeder extends Seeder
     public function run()
     {
         Type::create([
-            "name"=>"abc"
+            "name" => "Car"
+        ]);
+        Type::create([
+            "name" => "Bike"
+        ]);
+        Type::create([
+            "name" => "Bus"
+        ]);
+        Type::create([
+            "name" => "Van"
+        ]);
+        Type::create([
+            "name" => "Bolero"
         ]);
     }
 }

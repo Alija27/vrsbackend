@@ -43,12 +43,16 @@ Route::middleware(['auth:sanctum'])->prefix('/admin')->group(function () {
 Route::middleware('auth:sanctum')->controller(FrontVendorController::class)->group(function () {
     //Route::get('/addVehicle', 'addVehicle');
     Route::post('/addvehicle', 'addVehicle');
-    Route::post('/updatevehicle', 'updateVehicle');
+    Route::put('/updatevehicle/{vehicle}', 'updateVehicle');
+    Route::get('/vehicleByID/{vehicle}', 'vehicleById');
     Route::get('/locations', 'locations');
     Route::get('/registeredvehicles', 'revehicles');
+    Route::get('/registeredvehicles/{vehicle}', 'revehicleid');
     Route::post('/vehiclestatus/{vehicle}', 'vehicleStatus');
     Route::get('/getRequestList', 'getRequestList');
     Route::put('/changeRentalStatus/{rental}', 'vehicleApproved');
+    Route::put('/vendor-edit/{vendor}', 'VendorEdit');
+    Route::get('/vendorId/{vendor}', 'vendorId');
 });
 
 Route::controller(FrontController::class)->group(function () {
@@ -63,10 +67,14 @@ Route::controller(FrontController::class)->group(function () {
     Route::get('/vehicleReview', 'VehicleReview');
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::put('/updateProfile', 'updateProfile');
+        Route::put('/updateProfile/{user}', 'updateProfile');
         Route::get('/getMyBookings', 'myBookedVehicles');
         Route::post('/checkUserDetails', 'checkUserDetails');
         Route::get('/bookConfirmed', 'BookConfirmed');
         Route::post('/vendor-register', 'VendorRegister');
+        Route::get('/userId/{user}', 'userId');
+        Route::get('/eligible/{id}', 'eligibleForReview');
+        Route::post('/review/{vehicle}', 'postReview');
+        Route::get('/review/{vehicle}', 'getReview');
     });
 });

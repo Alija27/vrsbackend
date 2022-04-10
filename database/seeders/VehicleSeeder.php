@@ -19,6 +19,7 @@ class VehicleSeeder extends Seeder
             'vendor_id' => 1,
             'name' => "abc",
             'type_id' => 1,
+            'brand' => "asdgfg",
             'model' => "xyz",
             'color' => "red",
             'total_seats' => "4",

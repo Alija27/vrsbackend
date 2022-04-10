@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('type_id')->constrained();
             $table->string('model');
+            $table->string('brand');
             $table->string('color');
             $table->string('total_seats');
             $table->string('rental_price');

@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Review extends Model
 {
     use HasFactory;
-    protected $fillable = ['rental_id', 'user_id', 'message', 'stars'];
-    public function rental()
+    protected $fillable = ['vehicle_id', 'user_id', 'message', 'stars'];
+    public function vehicle()
     {
         return $this->belongsTo(Rental::class);
     }

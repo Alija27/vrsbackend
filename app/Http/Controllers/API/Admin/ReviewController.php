@@ -15,7 +15,7 @@ class ReviewController extends Controller
      */
     public function index()
     {
-        $reviews = Review::with(['rental', 'user'])->get();
+        $reviews = Review::with(['vehicle', 'user'])->get();
         return response()->json($reviews);
     }
 
@@ -76,5 +76,6 @@ class ReviewController extends Controller
     public function destroy(Review $review)
     {
         $review->delete();
+        return response()->json(["message" => "Review Deleted"]);
     }
 }

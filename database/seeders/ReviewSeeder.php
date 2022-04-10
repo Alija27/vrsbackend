@@ -16,9 +16,10 @@ class ReviewSeeder extends Seeder
     public function run()
     {
         Review::create([
-            'rental_id'=>1,
-        'user_id'=>1,
-        'message'=>"thik xa",
-        'stars'=>5]);
+            'vehicle_id' => 1,
+            'user_id' => 1,
+            'message' => "thik xa",
+            'stars' => 5
+        ]);
     }
 }

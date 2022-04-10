@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('rental_id')->constrained();
+            $table->foreignId('vehicle_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->text('message');
             $table->integer('stars');

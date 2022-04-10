@@ -11,6 +11,7 @@ use App\Models\Location;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -75,17 +76,18 @@ class FrontController extends Controller
         Vendor::create($data);
         return response()->json(["message" => "Vendor"]);
     }
+
     public function updateProfile(Request $request, User $user)
     {
         $data = $request->validate([
-            "name" => ["reuired"],
+            "name" => ["required"],
             "email" => ["required", "email"],
             "phone" => ["required", "numeric"],
             "addrress" => ["required"],
             "password" => ["required"],
-            "image" => ["required", 'image', 'mimes:png,jpgeg,gif'],
+            "image" => ["required",  'mimes:png,jpgeg,gif'],
             "citizenship_number" => ["required"],
-            "citizenship_image" => ["required", "image", "mimes:png,jpeg,gif"],
+            "citizenship_image" => ["required",  "mimes:png,jpeg,gif"],
 
         ]);
         if ($request->file('image')) {
@@ -113,8 +115,8 @@ class FrontController extends Controller
             }
         }
 
-        User::create($data);
-        return response()->json(['message' => 'User Created  Sucessfully']);
+        $user->update($data);
+        return response()->json(['message' => 'User updated  Sucessfully']);
     }
 
 
@@ -166,7 +168,7 @@ class FrontController extends Controller
     }
     public function showVehicle(Vehicle $vehicle)
     {
-        $vehicle->load('vendor');
+        $vehicle->load(['vendor', 'type', 'location']);
         return response()->json($vehicle);
     }
     public function availableVehicles()
@@ -278,5 +280,35 @@ class FrontController extends Controller
         $rentals = Rental::with('vehicle')->where('user_id', auth()->user()->id)->orderBy('id', 'DESC')->get();
 
         return response()->json($rentals);
+    }
+    public function userId(User $user)
+    {
+
+        return response()->json($user);
+    }
+    public function postReview(Request $request)
+    {
+        $data = $request->validate([
+            "user_id" => ["required"],
+            "vehicle_id" => ["required"],
+            "message" => ["required"],
+            "stars" => ["required"]
+        ]);
+
+        Review::create($data);
+        return response()->json(["message" => "Review Posted"]);
+    }
+
+    public function eligibleForReview($id)
+    {
+        // $vehicle = Vehicle::find($id);
+        $rentals = Rental::where('vehicle_id', $id)->where('user_id', auth()->user()->id)->where('is_approved', 'Completed')->count();
+        return $rentals;
+    }
+
+    public function getReview(Vehicle $vehicle)
+    {
+        $data = Review::with(['vehicle', 'user'])->where('vehicle_id', $vehicle->id)->get();
+        return response()->json($data);
     }
 }
