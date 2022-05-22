@@ -16,19 +16,24 @@ class TypeSeeder extends Seeder
     public function run()
     {
         Type::create([
-            "name" => "Car"
+            "name" => "Car",
+            "image" => "images\car.jpg"
         ]);
         Type::create([
-            "name" => "Bike"
+            "name" => "Bike",
+            "image" => "images\bike.jpeg"
         ]);
         Type::create([
-            "name" => "Bus"
+            "name" => "Scooter",
+            "image" => "images\scooter.jpeg"
         ]);
         Type::create([
-            "name" => "Van"
+            "name" => "Bus",
+            "image" => "images\bus.jpeg"
         ]);
         Type::create([
-            "name" => "Bolero"
+            "name" => "Van",
+            "image" => "images\a.jpeg"
         ]);
     }
 }

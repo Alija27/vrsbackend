@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\ForgotPassword;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -64,7 +65,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::with('vendor')->where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
@@ -85,5 +86,52 @@ class AuthController extends Controller
         }
 
         return response()->noContent();
+    }
+
+    public function forgotpassword(Request $request)
+    {
+        $request->validate([
+            'email' => ['required']
+        ]);
+        // yo line bata kun user tha hunxa
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => ["The provided email is not registered"],
+            ]);
+        } else {
+            ForgotPassword::create(['user_id' => $user->id, 'otp' => str::random(6)]);
+        }
+        // tei useer ko id chai return gareko yaha return gareko bhneko uta front end ma res.data ma aauxa haina ho tei res lai session ma rakheko aru ma ni use garna parni bhayera bujhis
+        return response()->json($user->id);
+    }
+
+    public function OTPVerification(Request $request)
+    {
+        $request->validate([
+            'otp' => ["required"]
+        ]);
+        // ani yaha chai tyo user ko token bata latest wala token ligeko bujhis ni la gar aba la bhayo gar
+        $otp = ForgotPassword::where('otp', $request->otp)->where('user_id', $request->user_id)->orderBy('id', 'desc')->first();
+        if (!$otp) {
+            return response()->json(["error" => "OTP not Matched"]);
+        }
+        return response()->json(["message" => "OTP matched"]);
+    }
+
+
+
+
+    public function changePassword(Request $request, User $user)
+    {
+        $request->validate([
+            "password" => ["required", "confirmed"],
+        ]);
+        $user->update(['password' => bcrypt($request->password)]);
+
+        return response()->json([
+            "message" => "Password Changed Successfully!"
+        ]);
     }
 }

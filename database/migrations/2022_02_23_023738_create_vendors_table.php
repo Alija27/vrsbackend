@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('address');
             $table->string('phone');
             $table->string('image');
+            $table->string('status')->default("Pending");
             $table->timestamps();
         });
     }

@@ -20,23 +20,24 @@ class UserSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'address' => 'gaindakot',
             'phone' => '9812919812',
-            'image' => 'images/XtY0eAQAutf1MmtP8fF2.gif',
+            'image' => 'images/XGnc1blguyiAfapjvTWP.jpg',
             'password' => bcrypt('password'),
             'role' => 'Admin',
             'citizenship_number' => '5698',
-            'citizenship_image' => 'images/XtY0eAQAutf1MmtP8fF2.gif'
+            'citizenship_image' => 'images/XGnc1blguyiAfapjvTWP.jpg'
         ]);
+
 
         User::create([
             'name' => 'Vendor',
             'email' => 'vendor@gmail.com',
             'address' => 'gaindakot',
             'phone' => '9812919813',
-            'image' => 'images/XtY0eAQAutf1MmtP8fF2.gif',
+            'image' => 'images/XGnc1blguyiAfapjvTWP.jpg',
             'password' => bcrypt('password'),
             'role' => 'Vendor',
             'citizenship_number' => '56988',
-            'citizenship_image' => 'images/XtY0eAQAutf1MmtP8fF2.gif'
+            'citizenship_image' => 'images/XGnc1blguyiAfapjvTWP.jpg'
         ]);
 
         User::create([
@@ -44,11 +45,23 @@ class UserSeeder extends Seeder
             'email' => 'customer@gmail.com',
             'address' => 'gaindakot',
             'phone' => '9812919814',
-            'image' => 'images/XtY0eAQAutf1MmtP8fF2.gif',
+            'image' => 'images/XGnc1blguyiAfapjvTWP.jpg',
             'password' => bcrypt('password'),
             'role' => 'Customer',
             'citizenship_number' => '569898',
-            'citizenship_image' => 'images/XtY0eAQAutf1MmtP8fF2.gif'
+            'citizenship_image' => 'images/XGnc1blguyiAfapjvTWP.jpg'
+        ]);
+
+        User::create([
+            'name' => 'A',
+            'email' => 'a@gmail.com',
+            'address' => 'gaindakot',
+            'phone' => '9812919814',
+            'image' => 'images/XGnc1blguyiAfapjvTWP.jpg',
+            'password' => bcrypt('password'),
+            'role' => 'Vendor',
+            'citizenship_number' => '56989',
+            'citizenship_image' => 'images/XGnc1blguyiAfapjvTWP.jpg'
         ]);
     }
 }

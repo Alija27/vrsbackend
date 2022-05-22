@@ -21,6 +21,7 @@ class VendorSeeder extends Seeder
             'address' => 'gaindakot',
             'phone' => '9812919812',
             'image' => "images/2Z1LVcumX95Lr0lfYCph.jpg",
+            'status' => "Accepted"
         ]);
     }
 }

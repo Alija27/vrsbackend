@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\Admin\MailController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\FrontController;
 use App\Http\Controllers\API\Vendor\FrontVendorController;
@@ -17,10 +18,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/', [MailController::class, 'sendMail']);
 Route::controller(AuthController::class)->group(function () {
     Route::post('/login', 'login');
     Route::post('/register', 'register');
-    Route::post('/forgot', 'forget');
+    Route::post('/forgotpassword', 'forgotpassword');
+    Route::post('/OTPVerification', 'OTPVerification');
+    Route::put('/changePassword/{user}', "changePassword");
     Route::post('/logout', 'logout');
 });
 
@@ -35,6 +39,7 @@ Route::middleware(['auth:sanctum'])->prefix('/admin')->group(function () {
     Route::resource('rentals', \App\Http\Controllers\API\Admin\RentalController::class);
     Route::resource('reviews', \App\Http\Controllers\API\Admin\ReviewController::class);
     Route::resource('locations', \App\Http\Controllers\API\Admin\LocationController::class);
+    Route::resource('contacts', \App\Http\Controllers\API\Admin\ContactController::class);
 });
 
 // Route::middleware('auth:sactum', 'vendor')->group(function () {
@@ -55,7 +60,9 @@ Route::middleware('auth:sanctum')->controller(FrontVendorController::class)->gro
     Route::get('/vendorId/{vendor}', 'vendorId');
 });
 
+
 Route::controller(FrontController::class)->group(function () {
+    Route::post('/contacts', 'contact');
     Route::get('/types', 'types');
     Route::get('/availablevehicles', 'availablevehicles');
     Route::post('/vehicles', 'vehicles');
@@ -65,6 +72,8 @@ Route::controller(FrontController::class)->group(function () {
     Route::post('/checkvehicle/{vehicle}', 'checkVehicle');
     Route::post('/requestVehicle', 'requestVehicle');
     Route::get('/vehicleReview', 'VehicleReview');
+    Route::get('/notification', 'notification');
+
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::put('/updateProfile/{user}', 'updateProfile');

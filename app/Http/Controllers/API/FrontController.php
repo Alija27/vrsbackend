@@ -5,21 +5,39 @@ namespace App\Http\Controllers\API;
 use App\Models\Type;
 use App\Models\User;
 use App\Models\Rental;
+use App\Models\Review;
 use App\Models\Vendor;
+use App\Models\Contact;
 use App\Models\Vehicle;
 use App\Models\Location;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\VehicleRequestSent;
+use App\Notifications\BookingConfirmationNotification;
+use App\Notifications\VendorAccountRegistrationRequestSent;
 
 class FrontController extends Controller
 {
+
+
+
+    public function contact(Request $request)
+    {
+        $data = $request->validate([
+            "name" => "required",
+            "email" => "required",
+            "phonenumber" => "required",
+            "message" => "required",
+        ]);
+        Contact::create($data);
+        return response()->json(["message" => "Message sent sucessfully"]);
+    }
     public function types()
     {
-        return response()->json(Type::select(['id', 'name'])->get());
+        return response()->json(Type::select(['id', 'name', 'image'])->get());
     }
     public function locations()
     {
@@ -60,7 +78,7 @@ class FrontController extends Controller
     public function VendorRegister(Request $request)
     {
         $data = $request->validate([
-            "user_id" => ["required"],
+            "user_id" => ["required", "unique:vendors,user_id"],
             "name" => ["required"],
             "phone" => ["required"],
             "address" => ["required"],
@@ -74,7 +92,9 @@ class FrontController extends Controller
             $data['image'] = "images/" . $path;
         }
         Vendor::create($data);
-        return response()->json(["message" => "Vendor"]);
+        $user = User::find($data["user_id"]);
+        $user->notify(new VendorAccountRegistrationRequestSent);
+        return response()->json(["message" => "Your registration request has sent to admin. You will be notify soon"]);
     }
 
     public function updateProfile(Request $request, User $user)
@@ -139,7 +159,14 @@ class FrontController extends Controller
         }
         return response()->json(['message' => "User deleted Sucessfully"]);
     }
+    public function notification(Vendor $vendor)
+    {
 
+        $data = Vendor::where('status', 'Accepted')->count();
+
+
+        return response()->json($data);
+    }
     function vehicles(Request $request)
     {
         $query = Vehicle::query();
@@ -216,7 +243,6 @@ class FrontController extends Controller
                 'is_available' => false,
             ]);
         }
-
         $total = $end_date->diffInDays($start_date) * $vehicle->rental_price;
         if ($total == 0) {
             $total = $vehicle->rental_price;
@@ -253,8 +279,8 @@ class FrontController extends Controller
 
 
         Rental::create($data);
-
-
+        $user = User::find($data["user_id"]);
+        $user->notify(new VehicleRequestSent());
         return response()->json("Requested Sucessfully");
     }
     /* public function checkUserDetails()

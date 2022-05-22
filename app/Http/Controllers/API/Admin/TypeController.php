@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\API\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Type;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class TypeController extends Controller
 {
@@ -28,8 +30,15 @@ class TypeController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => ["required"]
+            'name' => ["required"],
+            'image' => ["required", "image", "mimes:png,jpg"]
         ]);
+        $ext = $request->file('image')->extension();
+        $name = Str::random(20);
+        $path = $name . "." . $ext;
+
+        $request->file('image')->storeAs('public/images', $path);
+        $data['image'] = "images/" . $path;
         Type::create($data);
         return response()->json(['message' => 'Vehicle type Created sucessfully']);
     }
@@ -56,8 +65,23 @@ class TypeController extends Controller
     public function update(Request $request, Type $type)
     {
         $data = $request->validate([
-            'name' => ['required']
+            'name' => ['required'],
+            'image' => ["required", "image", "mimes:png,jpg"]
         ]);
+        if ($request->hasFile('image')) {
+            $request->validate(["image" => ['image', 'mimes:png,jpeg,gif']]);
+            $ext = $request->file('image')->extension();
+            $ext = $request->file('image')->extension();
+            $name = Str::random(20);
+            $path = $name . "." . $ext;
+
+            $request->file('image')->storeAs('public/images', $path);
+            $data['image'] = "images/" . $path;
+
+            if ($type->image) {
+                Storage::delete('public/' . $type->image);
+            }
+        }
         $type->update($data);
         return response()->json(['message' => 'Vehicle type updated sucessfully']);
     }

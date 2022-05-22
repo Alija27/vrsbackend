@@ -62,57 +62,62 @@ class LocationSeeder extends Seeder
             'latitude' => '27.666667',
         ]);
         Location::create([
-            'name' => 'Lalitpur',
+            'name' => 'Kanchanpur',
             'longitude' => '85.316667',
             'latitude' => '27.666667',
         ]);
         Location::create([
-            'name' => 'Lalitpur',
+            'name' => 'NepalGunj',
             'longitude' => '85.316667',
             'latitude' => '27.666667',
         ]);
         Location::create([
-            'name' => 'Lalitpur',
+            'name' => 'Kalikot',
             'longitude' => '85.316667',
             'latitude' => '27.666667',
         ]);
         Location::create([
-            'name' => 'Lalitpur',
+            'name' => 'Chitwan',
             'longitude' => '85.316667',
             'latitude' => '27.666667',
         ]);
         Location::create([
-            'name' => 'Lalitpur',
+            'name' => 'Manag',
             'longitude' => '85.316667',
             'latitude' => '27.666667',
         ]);
         Location::create([
-            'name' => 'Lalitpur',
+            'name' => 'Mustang',
             'longitude' => '85.316667',
             'latitude' => '27.666667',
         ]);
         Location::create([
-            'name' => 'Lalitpur',
+            'name' => 'Musikot',
             'longitude' => '85.316667',
             'latitude' => '27.666667',
         ]);
         Location::create([
-            'name' => 'Lalitpur',
+            'name' => 'Nagarkot',
             'longitude' => '85.316667',
             'latitude' => '27.666667',
         ]);
         Location::create([
-            'name' => 'Lalitpur',
+            'name' => 'Janakpur',
             'longitude' => '85.316667',
             'latitude' => '27.666667',
         ]);
         Location::create([
-            'name' => 'Lalitpur',
+            'name' => 'Okhaldhunga',
             'longitude' => '85.316667',
             'latitude' => '27.666667',
         ]);
         Location::create([
-            'name' => 'Lalitpur',
+            'name' => 'Patan',
+            'longitude' => '85.316667',
+            'latitude' => '27.666667',
+        ]);
+        Location::create([
+            'name' => 'Thumsi',
             'longitude' => '85.316667',
             'latitude' => '27.666667',
         ]);

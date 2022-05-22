@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('color');
             $table->string('total_seats');
             $table->string('rental_price');
-            $table->string('description');
+            $table->text('description');
             $table->string('terms')->nullable();
             $table->string('image')->require();
             $table->string('condition');

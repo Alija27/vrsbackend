@@ -1,0 +1,18 @@
+Vehicle::create([
+            'vendor_id' => 2,
+            'name' => "Audi R8",
+            'type_id' => 1,
+            'brand' => "Audi",
+            'model' => "R8",
+            'color' => "Black",
+            'total_seats' => "4",
+            'rental_price' => "4000",
+            'description' => "Whereas Lamborghini customers  understated and refined. ",
+            'terms' => "dfghj",
+            'image' => "images/Audi-TT-RS.jpg",
+            'condition' => "Good",
+            'is_available' => true,
+            'has_driver' => true,
+            'is_approved' => true,
+            'location_id' => 1,
+        ]);

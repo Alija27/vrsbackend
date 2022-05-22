@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Type extends Model
+class ForgotPassword extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'image'];
+    protected $fillable = ['user_id', 'otp'];
 
-    public function vehicles()
+    public function user()
     {
-        return $this->hasMany(Vehicle::class);
+        return $this->belongsTo(User::class);
     }
 }
