@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\ForgotPassword;
 use App\Http\Controllers\Controller;
+use App\Notifications\ForgotPassword as NotificationsForgotPassword;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -27,7 +28,7 @@ class AuthController extends Controller
     {
         $data = $request->validate([
             "name" => ["required"],
-            "email" => ["required", "email"],
+            "email" => ["required", "email", "unique:users,email"],
             "phone" => ["required", "numeric", "min:10", 'regex:/((98)|(97))([0-9]){8}/'],
             "address" => ["required"],
             "role" => ["required"],
@@ -101,10 +102,16 @@ class AuthController extends Controller
                 'email' => ["The provided email is not registered"],
             ]);
         } else {
-            ForgotPassword::create(['user_id' => $user->id, 'otp' => str::random(6)]);
+            $forgotPassword = ForgotPassword::create(['user_id' => $user->id, 'otp' => str::random(6)]);
+            $forgotDetails = [
+                "otp" => $forgotPassword->otp,
+                "user_name" => $user->name
+            ];
+            $user->notify(new NotificationsForgotPassword($forgotDetails));
         }
-        // tei useer ko id chai return gareko yaha return gareko bhneko uta front end ma res.data ma aauxa haina ho tei res lai session ma rakheko aru ma ni use garna parni bhayera bujhis
+
         return response()->json($user->id);
+        /*  $user->notify(new ForgotPassword); */
     }
 
     public function OTPVerification(Request $request)
@@ -112,7 +119,7 @@ class AuthController extends Controller
         $request->validate([
             'otp' => ["required"]
         ]);
-        // ani yaha chai tyo user ko token bata latest wala token ligeko bujhis ni la gar aba la bhayo gar
+        // ani yaha chai tyo user ko token bata latest wala token ligeko
         $otp = ForgotPassword::where('otp', $request->otp)->where('user_id', $request->user_id)->orderBy('id', 'desc')->first();
         if (!$otp) {
             return response()->json(["error" => "OTP not Matched"]);

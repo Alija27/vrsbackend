@@ -7,19 +7,18 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class BookingConfirmationNotification extends Notification
+class ForgotPassword extends Notification
 {
     use Queueable;
-
+    private $forgotDetails;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    private $rental;
-    public function __construct($rental)
+    public function __construct($forgotDetails)
     {
-        $this->rental = $rental;
+        $this->forgotDetails = $forgotDetails;
     }
 
     /**
@@ -42,9 +41,11 @@ class BookingConfirmationNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->line('Your booking for the vehicle: ' . $this->rental->vehicle->name . ' has been confirmed')
+            ->greeting("Hello " . $this->forgotDetails["user_name"])
+            ->line('Enter the below Token to change your password')
+            ->line($this->forgotDetails["otp"])
             ->action('Notification Action', url('/'))
-            ->line('Enjoy your ride!');
+            ->line('Thank you for using our application!');
     }
 
     /**

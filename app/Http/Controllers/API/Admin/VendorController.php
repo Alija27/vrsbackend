@@ -59,7 +59,7 @@ class VendorController extends Controller
      */
     public function show(Vendor $vendor)
     {
-        $vendor->load(['user', 'vehicle']);
+        $vendor->load(['user', 'vehicles']);
         return response()->json($vendor);
     }
 

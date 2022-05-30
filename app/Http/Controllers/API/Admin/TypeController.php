@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Models\Type;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\NewVehicleTypeAdded;
+use Illuminate\Support\Facades\Notification;
 
 class TypeController extends Controller
 {
@@ -30,7 +33,7 @@ class TypeController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => ["required"],
+            'name' => ["required", "unique:types,name"],
             'image' => ["required", "image", "mimes:png,jpg"]
         ]);
         $ext = $request->file('image')->extension();
@@ -40,6 +43,8 @@ class TypeController extends Controller
         $request->file('image')->storeAs('public/images', $path);
         $data['image'] = "images/" . $path;
         Type::create($data);
+        $users = User::all();
+        Notification::send($users, new NewVehicleTypeAdded);
         return response()->json(['message' => 'Vehicle type Created sucessfully']);
     }
 
@@ -66,7 +71,7 @@ class TypeController extends Controller
     {
         $data = $request->validate([
             'name' => ['required'],
-            'image' => ["required", "image", "mimes:png,jpg"]
+
         ]);
         if ($request->hasFile('image')) {
             $request->validate(["image" => ['image', 'mimes:png,jpeg,gif']]);
@@ -94,7 +99,12 @@ class TypeController extends Controller
      */
     public function destroy(Type $type)
     {
-        $type->delete();
-        return response()->json(['message' => 'Vehicle type deleted  sucessfully']);
+        try {
+            $type->delete();
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'You cannot delete Type with related data!'], 401);
+        }
+
+        return response()->json(['message' => "Type deleted Sucessfully"]);
     }
 }

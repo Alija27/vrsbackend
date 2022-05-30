@@ -73,7 +73,8 @@ Route::controller(FrontController::class)->group(function () {
     Route::post('/requestVehicle', 'requestVehicle');
     Route::get('/vehicleReview', 'VehicleReview');
     Route::get('/notification', 'notification');
-
+    Route::get('/frequentlyusedvehicles', 'frequentlyUsedVehicles');
+    Route::get('/allreviews', 'allReviews');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::put('/updateProfile/{user}', 'updateProfile');
@@ -85,5 +86,6 @@ Route::controller(FrontController::class)->group(function () {
         Route::get('/eligible/{id}', 'eligibleForReview');
         Route::post('/review/{vehicle}', 'postReview');
         Route::get('/review/{vehicle}', 'getReview');
+        Route::put('/cancelBooking/{rental}', 'CancelBooking');
     });
 });

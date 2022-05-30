@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\API\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Location;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
+use App\Notifications\NewLocationAdded;
+use Illuminate\Support\Facades\Notification;
 
 
 class LocationController extends Controller
@@ -35,6 +39,8 @@ class LocationController extends Controller
         ]);
 
         Location::create($data);
+        $users = User::all();
+        Notification::send($users, new NewLocationAdded);
 
         return response()->json(['message' => 'Location Created  Sucessfully']);
     }

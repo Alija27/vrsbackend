@@ -27,6 +27,7 @@ class TypeSeeder extends Seeder
             "name" => "Scooter",
             "image" => "images\scooter.jpeg"
         ]);
+
         Type::create([
             "name" => "Bus",
             "image" => "images\bus.jpeg"

@@ -17,7 +17,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\VehicleRequestSent;
 use App\Notifications\BookingConfirmationNotification;
+use App\Notifications\NewVehicleRequest;
 use App\Notifications\VendorAccountRegistrationRequestSent;
+use Carbon\Carbon;
 
 class FrontController extends Controller
 {
@@ -29,12 +31,25 @@ class FrontController extends Controller
         $data = $request->validate([
             "name" => "required",
             "email" => "required",
-            "phonenumber" => "required",
+            "phonenumber" => ["required", "numeric", "min:10", 'regex:/((98)|(97))([0-9]){8}/'],
             "message" => "required",
         ]);
         Contact::create($data);
         return response()->json(["message" => "Message sent sucessfully"]);
     }
+
+    public function frequentlyUsedVehicles()
+    {
+        $vehicles = Rental::with('vehicle')->selectRaw('count(vehicle_id) as number_of_bookings, vehicle_id')->groupBy('vehicle_id')->orderByDesc('number_of_bookings')->take(5)->get();
+        return $vehicles;
+    }
+
+    public function allReviews()
+    {
+        $reviews = Review::with('vehicle')->get();
+        return $reviews;
+    }
+
     public function types()
     {
         return response()->json(Type::select(['id', 'name', 'image'])->get());
@@ -49,7 +64,7 @@ class FrontController extends Controller
         $data = $request->validate([
             "name" => ["required"],
             "email" => ["required", "email"],
-            "phone" => ["required", "numeric", "min:10"],
+            "phone" => ["required", "numeric", "min:10", 'regex:/((98)|(97))([0-9]){8}/'],
             "address" => ["required"],
             "password" => ["required"],
             "image" => ["required", 'image', 'mimes:png,jpeg,gif'],
@@ -80,7 +95,7 @@ class FrontController extends Controller
         $data = $request->validate([
             "user_id" => ["required", "unique:vendors,user_id"],
             "name" => ["required"],
-            "phone" => ["required"],
+            "phone" => ["required", "numeric", "min:10", 'regex:/((98)|(97))([0-9]){8}/'],
             "address" => ["required"],
             "image" => ["required", "mimes:jpg,png,jpeg,gif"]
         ]);
@@ -102,7 +117,7 @@ class FrontController extends Controller
         $data = $request->validate([
             "name" => ["required"],
             "email" => ["required", "email"],
-            "phone" => ["required", "numeric"],
+            "phone" => ["required", "numeric", "min:10", 'regex:/((98)|(97))([0-9]){8}/'],
             "addrress" => ["required"],
             "password" => ["required"],
             "image" => ["required",  'mimes:png,jpgeg,gif'],
@@ -222,8 +237,11 @@ class FrontController extends Controller
             'end_date' => ['required', 'date', 'after:start_date'],
         ]);
 
-        $start_date = $request->date('start_date');
-        $end_date = $request->date('end_date');
+        // $start_date = $request->date('start_date');
+        // $end_date = $request->date('end_date');
+
+        $start_date = Carbon::parse($request->start_date);
+        $end_date = Carbon::parse($request->end_date);
 
         if (!$vehicle->is_available) {
             return response()->json([
@@ -232,27 +250,29 @@ class FrontController extends Controller
             ]);
         }
 
-        $rentals = Rental::where('vehicle_id', $vehicle->id)
-            ->whereBetween('start_date', [$start_date, $end_date])
-            ->orWhereBetween('end_date', [$start_date, $end_date])
-            ->count();
+        $rentals = Rental::whereBetween('start_date', [$start_date, $end_date])
+            ->orWhereBetween('end_date', [$start_date, $end_date])->get()
+            ->pluck('vehicle_id')
+            ->toArray();
 
-        if ($rentals > 0) {
+        $vehicles = Vehicle::whereNotIn('id', $rentals)->get()->pluck('id')->toArray();
+
+        if (in_array($vehicle->id, $vehicles)) {
+            $total = $end_date->diffInDays($start_date) * $vehicle->rental_price;
+            if ($total == 0) {
+                $total = $vehicle->rental_price;
+            }
+            return response()->json([
+                'status' => 'Vehicle is available!',
+                'total_price' => $total,
+                'is_available' => true,
+            ]);
+        } else {
             return response()->json([
                 'status' => 'Vehicle is not available for given time period.',
                 'is_available' => false,
             ]);
         }
-        $total = $end_date->diffInDays($start_date) * $vehicle->rental_price;
-        if ($total == 0) {
-            $total = $vehicle->rental_price;
-        }
-
-        return response()->json([
-            'status' => 'Vehicle is available!',
-            'total_price' => $total,
-            'is_available' => true,
-        ]);
     }
 
     public function requestVehicle(Request $request, User $user)
@@ -281,8 +301,11 @@ class FrontController extends Controller
         Rental::create($data);
         $user = User::find($data["user_id"]);
         $user->notify(new VehicleRequestSent());
+        $vendor = User::find(Vendor::find(Vehicle::find($data['vehicle_id'])->vendor_id)->user_id);
+        $vendor->notify(new NewVehicleRequest);
         return response()->json("Requested Sucessfully");
     }
+
     /* public function checkUserDetails()
     {
         $user = auth()->user();
@@ -296,6 +319,7 @@ class FrontController extends Controller
 
         return response()->noContent();
     } */
+
     public function  VehicleReview(Vehicle $vehicle)
     {
         return response()->json($vehicle->reviews);
@@ -331,6 +355,7 @@ class FrontController extends Controller
         $rentals = Rental::where('vehicle_id', $id)->where('user_id', auth()->user()->id)->where('is_approved', 'Completed')->count();
         return $rentals;
     }
+
 
     public function getReview(Vehicle $vehicle)
     {

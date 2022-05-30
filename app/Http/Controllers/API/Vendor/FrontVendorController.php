@@ -3,15 +3,22 @@
 namespace App\Http\Controllers\API\Vendor;
 
 use App\Models\Type;
+use App\Models\Rental;
+use App\Models\Vendor;
 use App\Models\Vehicle;
 use App\Models\Location;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Vendor;
-use App\Models\Rental;
+use App\Models\User as ModelsUser;
+use App\Notifications\BookingConfirmationNotification;
+use App\Notifications\CanceledBookingNotification;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\VehicleAvailable;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\NewVehicleRequest;
+use Illuminate\Support\Facades\Notification;
 
 class FrontVendorController extends Controller
 {
@@ -20,21 +27,34 @@ class FrontVendorController extends Controller
     {
         $vehicle->update([
             'is_available' => $request->is_available == 1 ? true : false,
+
         ]);
 
         return response()->json([
             'is_available' => $request->is_available == 1 ? true : false,
+
         ]);
     }
 
     public function vehicleApproved(Request $request, Rental $rental)
     {
-        $request->validate([
+        $data = $request->validate([
             "is_approved" => ['required'],
         ]);
-        $rental->update([
+        $data = $rental->update([
             'is_approved' => $request->is_approved
         ]);
+
+        if ($request->is_approved == "Confirmed") {
+            $user = ModelsUser::find($rental->user_id);
+            $user->notify(new BookingConfirmationNotification($rental));
+        }
+        if ($request->is_approved == "Canceled") {
+            $user = ModelsUser::find($rental->user_id);
+            $user->notify(new CanceledBookingNotification($rental));
+        }
+        /*  $user = User::find(Rental::find($data["user_id"]));
+        $user->notify(new NewVehicleRequest); */
         return response()->json(['message' => "Status Updated"]);
     }
 
@@ -70,7 +90,6 @@ class FrontVendorController extends Controller
         }
 
         Vehicle::create($data);
-
         return response()->json(['message' => 'Vehicle Created sucessfully']);
     }
 
@@ -149,8 +168,6 @@ class FrontVendorController extends Controller
         }
 
         $vehicles = auth()->user()->vendor->vehicles;
-
-
         $vehicle_ids = $vehicles->pluck('id')->toArray();
 
         $rentals = Rental::with(['user', 'vehicle'])->whereIn('vehicle_id', $vehicle_ids)->orderBy('id', 'DESC')->get();
@@ -190,7 +207,7 @@ class FrontVendorController extends Controller
         $data = $request->validate([
             "user_id" => ["required"],
             "name" => ["required"],
-            "phone" => ["required"],
+            "phone" => ["required", "numeric", "min:10", 'regex:/((98)|(97))([0-9]){8}/'],
             "address" => ["required"],
 
         ]);

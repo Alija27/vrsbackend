@@ -35,9 +35,9 @@ class UserController extends Controller
             "phone" => ["required", "numeric", "min:10"],
             "address" => ["required"],
             "password" => ["required"],
-            "role" => ["required"],
             "image" => ["required", 'image', 'mimes:png,jpeg,gif'],
-
+            "citizenship_number" => ["required"],
+            "citizenship_image" => ["required", "image", "mimes:png,jpeg,gif"],
         ]);
 
         if ($request->file('image')) {
@@ -47,13 +47,18 @@ class UserController extends Controller
             $request->file('image')->storeAs('public/images', $path);
             $data['image'] = "images/" . $path;
         }
-
-
-
+        if ($request->file('citizenship_image')) {
+            $ext = $request->file('citizenship_image')->extension();
+            $name = Str::random(20);
+            $path = $name . "." . $ext;
+            $request->file('citizenship_image')->storeAs('public/images', $path);
+            $data['citizenship_image'] = "images/" . $path;
+        }
 
         User::create($data);
         return response()->json(['message' => 'User Created  Sucessfully']);
     }
+
 
     /**
      * Display the specified resource.
@@ -84,17 +89,35 @@ class UserController extends Controller
             "address" => ["required"],
             // "password" => ["required"],
             "role" => ["required"],
-            "image" => ["nullable", 'image', 'mimes:png,jpeg,gif']
+            "citizenship_number" => ["required"],
+
+
         ]);
 
 
         if ($request->hasFile('image')) {
+            $request->validate([
+                "image" => ["nullable", 'image', 'mimes:png,jpeg,gif'],
+            ]);
             $ext = $request->file('image')->extension();
             $name = Str::random(20);
             $path = $name . "." . $ext;
             $request->file('image')->storeAs('public/images', $path);
             $data['image'] = "images/" . $path;
 
+            if ($user->image) {
+                Storage::delete('public/' . $user->image);
+            }
+        }
+        if ($request->file('citizenship_image')) {
+            $request->validate([
+                "citizenship_image" => ["nullable", 'image', 'mimes:png,jpeg,gif'],
+            ]);
+            $ext = $request->file('citizenship_image')->extension();
+            $name = Str::random(20);
+            $path = $name . "." . $ext;
+            $request->file('citizenship_image')->storeAs('public/images', $path);
+            $data['citizenship_image'] = "images/" . $path;
             if ($user->image) {
                 Storage::delete('public/' . $user->image);
             }

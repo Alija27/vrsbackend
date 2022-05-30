@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class BookingConfirmationNotification extends Notification
+class VehicleAvailable extends Notification
 {
     use Queueable;
 
@@ -16,10 +16,9 @@ class BookingConfirmationNotification extends Notification
      *
      * @return void
      */
-    private $rental;
-    public function __construct($rental)
+    public function __construct()
     {
-        $this->rental = $rental;
+        //
     }
 
     /**
@@ -42,9 +41,9 @@ class BookingConfirmationNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->line('Your booking for the vehicle: ' . $this->rental->vehicle->name . ' has been confirmed')
-            ->action('Notification Action', url('/'))
-            ->line('Enjoy your ride!');
+                    ->line('The introduction to the notification.')
+                    ->action('Notification Action', url('/'))
+                    ->line('Thank you for using our application!');
     }
 
     /**

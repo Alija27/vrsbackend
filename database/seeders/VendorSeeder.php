@@ -20,7 +20,7 @@ class VendorSeeder extends Seeder
             'user_id' => 2,
             'address' => 'gaindakot',
             'phone' => '9812919812',
-            'image' => "images/2Z1LVcumX95Lr0lfYCph.jpg",
+            'image' => "images/seed.png",
             'status' => "Accepted"
         ]);
     }
