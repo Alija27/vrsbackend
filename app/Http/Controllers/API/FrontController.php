@@ -208,6 +208,7 @@ class FrontController extends Controller
 
         return response()->json($vehicles);
     }
+
     public function showVehicle(Vehicle $vehicle)
     {
         $vehicle->load(['vendor', 'type', 'location']);
@@ -227,6 +228,7 @@ class FrontController extends Controller
         $rental->update([
             'is_approved' => $request->is_approved
         ]);
+        $rental->delete();
         return response()->json(['message' => "Status Updated"]);
     }
 
@@ -254,10 +256,33 @@ class FrontController extends Controller
             ->orWhereBetween('end_date', [$start_date, $end_date])->get()
             ->pluck('vehicle_id')
             ->toArray();
+        // return $rentals;
+        // $vehicles = Vehicle::whereNotIn('id', $rentals)->get()->pluck('id')->toArray();
+        // return $vehicles;
 
-        $vehicles = Vehicle::whereNotIn('id', $rentals)->get()->pluck('id')->toArray();
+        // if (in_array($vehicle->id, $vehicles)) {
+        // $total = $end_date->diffInDays($start_date) * $vehicle->rental_price;
+        // if ($total == 0) {
+        //     $total = $vehicle->rental_price;
+        // }
+        // return response()->json([
+        //     'status' => 'Vehicle is available!',
+        //     'total_price' => $total,
+        //     'is_available' => true,
+        // ]);
+        // } else {
+        // return response()->json([
+        //     'status' => 'Vehicle is not available for given time period.',
+        //     'is_available' => false,
+        // ]);
+        // }
 
-        if (in_array($vehicle->id, $vehicles)) {
+        if (in_array($vehicle->id, $rentals)) {
+            return response()->json([
+                'status' => 'Vehicle is not available for given time period.',
+                'is_available' => false,
+            ]);
+        } else {
             $total = $end_date->diffInDays($start_date) * $vehicle->rental_price;
             if ($total == 0) {
                 $total = $vehicle->rental_price;
@@ -266,11 +291,6 @@ class FrontController extends Controller
                 'status' => 'Vehicle is available!',
                 'total_price' => $total,
                 'is_available' => true,
-            ]);
-        } else {
-            return response()->json([
-                'status' => 'Vehicle is not available for given time period.',
-                'is_available' => false,
             ]);
         }
     }
@@ -327,7 +347,7 @@ class FrontController extends Controller
 
     public function myBookedVehicles()
     {
-        $rentals = Rental::with('vehicle')->where('user_id', auth()->user()->id)->orderBy('id', 'DESC')->get();
+        $rentals = Rental::withTrashed()->with('vehicle')->where('user_id', auth()->user()->id)->orderBy('id', 'DESC')->get();
 
         return response()->json($rentals);
     }
@@ -361,5 +381,12 @@ class FrontController extends Controller
     {
         $data = Review::with(['vehicle', 'user'])->where('vehicle_id', $vehicle->id)->get();
         return response()->json($data);
+    }
+
+    public function showByType(Type $type)
+    {
+        $vehicles = Vehicle::with('type')->where('type_id', $type->id)->get();
+
+        return response()->json($vehicles);
     }
 }

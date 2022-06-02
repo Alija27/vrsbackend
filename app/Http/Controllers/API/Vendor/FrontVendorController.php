@@ -170,7 +170,7 @@ class FrontVendorController extends Controller
         $vehicles = auth()->user()->vendor->vehicles;
         $vehicle_ids = $vehicles->pluck('id')->toArray();
 
-        $rentals = Rental::with(['user', 'vehicle'])->whereIn('vehicle_id', $vehicle_ids)->orderBy('id', 'DESC')->get();
+        $rentals = Rental::withTrashed()->with(['user', 'vehicle'])->whereIn('vehicle_id', $vehicle_ids)->orderBy('id', 'DESC')->get();
 
         return response()->json($rentals);
     }

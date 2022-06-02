@@ -75,6 +75,7 @@ Route::controller(FrontController::class)->group(function () {
     Route::get('/notification', 'notification');
     Route::get('/frequentlyusedvehicles', 'frequentlyUsedVehicles');
     Route::get('/allreviews', 'allReviews');
+    Route::get('/showbytype/{type}', 'showByType');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::put('/updateProfile/{user}', 'updateProfile');

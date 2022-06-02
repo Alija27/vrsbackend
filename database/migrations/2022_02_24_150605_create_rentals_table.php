@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('is_complete')->default(0);
             $table->string('total_amount');
             $table->string('remarks')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -15,7 +15,7 @@ class RentalController extends Controller
      */
     public function index()
     {
-        $rentals = Rental::with(['user', 'vehicle'])->get();
+        $rentals = Rental::withTrashed()->with(['user', 'vehicle'])->get();
         return response()->json($rentals);
     }
 
